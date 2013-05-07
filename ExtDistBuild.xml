@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--must Put the file in "Solr-Xversion\solr\webapp" -->
+<project name="extend-solr-war" default="dist">
+	
+	<description>
+    This file is designed for compile extend functionality attach to solr
+  </description>
+  <property name="solr.war.suffix" value="DYP-WAR" />
+  <property name="extend-solr.dir" value="D:/DevelopmentEnv/eclipse-juno-64/workspace/Solr4.0Extends"/>
+  <import file="../build.xml"/>
+  <import file="../common-build.xml"/>
+  
+
+  <target name="dist" description="Creates the extend Solr WAR Distribution file.">
+    <build-manifest title="Apache Solr Search Server"
+                    implementation.title="org.apache.solr"
+                    spec.version="${solr.spec.version}"/>
+    <ant dir="${common-solr.dir}" inheritall="false" target="contribs-add-to-war"/>
+    <war destfile="${dist}/apache-solr-${version}${solr.war.suffix}.war"
+         webxml="web/WEB-INF/web.xml"
+         manifest="${manifest.file}">
+      <lib dir="${common-solr.dir}/core/lib" excludes="${exclude.from.war},${common.classpath.excludes}">
+        <exclude name="*servlet-api*.jar" />
+        <exclude name="easymock-*.jar" />
+      </lib>
+      <!--dyp extend lire lib at 2013/4/22-->
+      <lib dir="${common-solr.dir}/extend/lib"/><!--extend lire lib 2013/4/22-->
+      <lib dir="${common-solr.dir}/solrj/lib" excludes="${exclude.from.war},${common.classpath.excludes}"/>
+      <lib dir="${lucene-libs}" excludes="${exclude.from.war},${common.classpath.excludes}" />
+      <lib dir="${dist}" excludes="${exclude.from.war},${common.classpath.excludes}">
+        <include name="apache-solr-solrj-${version}.jar" />
+        <include name="apache-solr-core-${version}.jar" />
+      </lib>
+      <fileset dir="${dest}/web" excludes="${exclude.from.war}"/> <!-- contribs' additions -->
+      <fileset dir="web" excludes="${exclude.from.war}"/>
+      <metainf dir="${common-solr.dir}" includes="LICENSE.txt,NOTICE.txt" excludes="${exclude.from.war}"/>
+    </war>
+  </target>
+
+
+</project>

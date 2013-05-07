@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Solr4.0"/>
+	<classpathentry kind="lib" path="E:/OpenSourceProject/Solr4.0/solr/solrj/lib/jcl-over-slf4j-1.6.4.jar"/>
+	<classpathentry kind="lib" path="E:/OpenSourceProject/Solr4.0/solr/solrj/lib/slf4j-api-1.6.4.jar"/>
+	<classpathentry kind="lib" path="E:/OpenSourceProject/Solr4.0/solr/solrj/lib/slf4j-jdk14-1.6.4.jar"/>
+	<classpathentry kind="lib" path="E:/OpenSourceProject/Solr4.0/solr/extend/lib/lire.jar" sourcepath="/Solr4.0"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<project name="extend-solr" default="compile">
+	<description>
+    This file is designed for compile extend functionality attach to solr
+  </description>
+  <!--compile param-->
+	<property name="javac.source" value="1.6"/>
+	<property name="javac.target" value="1.6"/>
+	<property name="build.encoding" value="utf-8"/>
+	<property name="javac.args" value="-Xlint -Xlint:-deprecation -Xlint:-serial -Xlint:-options"/>
+	<property name="my.common.classpath.excludes" value="**/*.txt,**/*.template,**/*.sha1m,**/*.class,**/*.war,**/*.MF,**/*.properties,**/*.dtd,**/*.rslp" />
+	<property name="extend.lib" value="" />
+  <property name="extend.src.dir" location="src"/>
+  <property name="extend.build.dir" location="build"/>
+  <!--As described above, we don't need to change, if have particular case-->
+  
+  <!--must be put in ExtDistBuild.xml, as package war file include the extend lib-->
+  <property name="extend-solr.dir" value="D:/DevelopmentEnv/eclipse-juno-64/workspace/Solr4.0Extends"/>
+  
+  <!--where save the solr and lucene lib that will be useed at extention solr source when compile-->
+  <property name="origin-solr.dir" value="E:/OpenSourceProject/Solr4.0/solr" />
+  <property name="origin-lucene.dir" value="E:/OpenSourceProject/Solr4.0/lucene/build"/>
+  <property name="my.origin-solr.dir" value="E:/OpenSourceProject/Solr4.0/solr/dist"/>
+  <!--As described above, we have to set two properties to the value that where does locate the solr lib that need in 
+      compile the extend solr source-->
+  
+  <import file="${origin-solr.dir}/build.xml"/>
+      
+	<path id="extends.dependencies">
+  	<!--dyp add extention lib 2013/4/22-->
+  	<fileset dir="${extend-solr.dir}/extend/lib"/><!--extention lire lib in extend/lib 2013/4/22-->
+  	<!--the following is solr lib-->
+  	<fileset dir="${origin-solr.dir}/dist" excludes="${my.common.classpath.excludes}"/>
+  	<!--the following is lucene lib-->
+  	<fileset dir="${origin-lucene.dir}/analysis/common" excludes="${my.common.classpath.excludes}"/>
+  	<fileset dir="${origin-lucene.dir}/core" excludes="${my.common.classpath.excludes}"/>
+  	<fileset dir="${origin-lucene.dir}/grouping" excludes="${my.common.classpath.excludes}"/>
+  	<fileset dir="${origin-lucene.dir}/queryparser" excludes="${my.common.classpath.excludes}"/>
+ 	</path>
+ 	
+ 	
+ 	<target name="compile-sole-lucene" description="Compile Lucene and Solr">
+    <sequential>
+      <subant target="compile" inheritall="false" failonerror="true">
+        <fileset dir="E:/OpenSourceProject/Solr4.0/lucene" includes="build.xml" />
+        <fileset dir="E:/OpenSourceProject/Solr4.0/solr" includes="build.xml" />
+      </subant>
+    </sequential>
+  </target>
+  
+  <target name="dist-sole-lucene" depends="compile-sole-lucene" description="dist Lucene and Solr">
+    <sequential>
+      <subant target="dist" inheritall="false" failonerror="true">
+        <fileset dir="E:/OpenSourceProject/Solr4.0/solr" includes="build.xml" />
+      </subant>
+    </sequential>
+  </target>
+  
+ 	<target name="compile" depends="dist-sole-lucene" description="Compiles extend solr classes" >
+  	<!--dyp add at 2013/4/22 for finding solr classpath-->
+    <extcompile
+      srcdir="${extend.src.dir}"
+      destdir="${extend.build.dir}/classes/java">
+      <classpath refid="extends.dependencies"/>
+    </extcompile>
+  </target>
+  
+  <target name="dist" description="dist Lucene and Solr">
+    <sequential>
+      <subant target="dist" inheritall="false" failonerror="true">
+        <fileset dir="E:/OpenSourceProject/Solr4.0/solr/webapp" includes="ExtDistBuild.xml" />
+      </subant>
+    </sequential>
+  </target>
+  
+
+  
+  <!--+
+      | C O M P I L E
+      | M A C R O S
+      +-->
+  <macrodef name= "extcompile">
+    <attribute name="srcdir"/>
+    <attribute name="destdir"/>
+    <attribute name="javac.source" default="${javac.source}"/>
+    <attribute name="javac.target" default="${javac.target}"/>
+    <attribute name="includeantruntime" default="${javac.includeAntRuntime}" />
+
+    <element name="nested" implicit="yes" optional="yes"/>
+
+    <sequential>
+    	<echo message="includeantruntime = @{includeantruntime}"/>
+      <mkdir dir="@{destdir}" />
+      <javac
+        includeAntRuntime="@{includeantruntime}"
+        encoding="${build.encoding}"
+        bootclasspath="${bootclasspath}"
+        srcdir="@{srcdir}"
+        destdir="@{destdir}"
+        deprecation="${javac.deprecation}"
+        debug="${javac.debug}"
+        source="@{javac.source}"
+        target="@{javac.target}">
+        <nested/>
+        <!-- <compilerarg line="-Xmaxwarns 10000000"/>
+        <compilerarg line="-Xmaxerrs 10000000"/> -->
+        <!-- for generics in Java 1.5: -->
+        <compilerarg line= "${javac.args}"/>
+      </javac>
+    </sequential>
+  </macrodef>
+
+</project>
